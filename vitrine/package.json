@@ -1,0 +1,21 @@
+{
+  "name": "vitrine",
+  "version": "1.0.0",
+  "description": "Curso 16 horas de NodeJS na Novatec",
+  "main": "app.js",
+  "scripts": {
+    "start": "set NODE_ENV=development && nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.12.3",
+    "grunt": "^0.4.5"
+  },
+  "devDependencies": {
+    "grunt-contrib-cssmin": "^0.12.2",
+    "grunt-contrib-uglify": "^0.9.1",
+    "grunt-contrib-watch": "^0.6.1"
+  }
+}
