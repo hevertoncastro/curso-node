@@ -1,33 +1,24 @@
 var express = require('express');
+var methodOverride = require('method-override');
+var bodyParser = require('body-parser');
 var app = express();
 
-app.get('/', function (req, res) {
-  res.send('Home');
+app.use(methodOverride('X-HTTP-Method'));
+app.use(methodOverride('X-HTTP-Method-Override'));
+app.use(methodOverride('X-Method-Override'));
+app.use(methodOverride('_method'));
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use('/', require('./routes')(app));
+
+app.use(function(request, response, next) {
+  response.send('Error 404');
 });
 
-app.get('/products', function (req, res) {
-  res.send('Devolve todos');
+app.use(function(err, request, response, next) {
+  response.status(500).send('Error 500'+err);
 });
 
-app.get('/products/:id', function (req, res) {
-  var id = req.params.id;
-  var category = req.query.category;
-  res.send('Devolve um item específico: '+id+' da categorie '+category);
-});
-
-app.post('/products', function (req, res) {
-  res.send('Crio um item');
-});
-
-app.put('/products/:id', function (req, res) {
-  res.send('Atualiza item');
-});
-
-var server = app.listen(3000, function () {
-
-  var host = server.address().address;
-  var port = server.address().port;
-
-  console.log('Example app listening at http://%s:%s', host, port);
-
-});
+module.exports = app;
