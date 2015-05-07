@@ -1,54 +1,63 @@
-var mongojs = require('mongojs');
-var db = mongojs('localhost/vitrine');
-
-
-db.collection('products').find({}, function(err, result){
-	console.log(err, result);
-});
+var model = require('../models/ProductsModel');
+var debug = require('debug')('vitrine:controller');
+var Promise = require('bluebird');
+var debug = require('debug')('vitrine:controller');
 
 function ProductsController(){
-
+	model = Promise.promisifyAll(model);
 }
 
 ProductsController.prototype.findAll = function(request, response, next){
-	response.send('Exibe todos');
-	db.collection('products').find({}, function(err, result){
-		response.json(result);
-	});
+	model.findAsync({})
+		.then(function(err, result){
+			return response.json(err);
+		})
+		.catch(next);
 };
 
 ProductsController.prototype.create = function(request, response, next){
-	response.send('Cria itens');
-
-	var body = request.body;
-	
-	db.collection('products').insert(body, function(err, result){
-		response.json(result);
-	});
+	var body = request.body;	
+	model.createAsync(body)
+		.then(function(result){
+			return response.json(err);
+		})
+		.catch(function(err){
+			next(err);
+		});
 };
 
 ProductsController.prototype.findOne = function(request, response, next){
-	var _id = mongojs.ObjectId(request.params.id);
+	var id = request.params.id;
 
-	db.collection('products').findOne({_id: _id}, function(err, result){
+	model.findOne(id, function(err, result){
+		if(err){
+			return response.json(err);
+		}
 		response.json(result);
 	});
-
-	response.send('Exibe único item');
 };
 
+//FINALIZAR
 ProductsController.prototype.update = function(request, response, next){
-	response.send('Atualiza item');
-	db.collection('products').update({_id: _id}, {name: 'Produto 1'}, function(err, result){
-		response.json(result);
-	});
+	
+	var id = request.params.id;
+
+	model.updateAsync(id, {name: "Product Updated"})
+		.then(function(result){
+			response.json(result);
+		})
+		.catch(next);
 };
 
 ProductsController.prototype.delete = function(request, response, next){
-	response.send('Exclui item');
-	db.collection('products').remove({_id: _id}, function(err, result){
-		response.json(result);
-	});
+	
+	var id = request.params.id;
+
+	model.removeAsync(id)
+		.then(function(result){
+			response.json(result);
+		})
+		.catch(next);
 };
 
 module.exports = new ProductsController();

@@ -3,10 +3,20 @@ module.exports = function(app){
 	var router = express.Router();
 
 	router.get('/', function (request, response, next) {
-		response.send('Heverton Castro - Home');
+		response.render('index', {
+
+			products: [
+				{name: 'Todinho', price: 2.70},
+				{name: 'Fanta', price: 2.70},
+				{name: 'Suco', price: 2.70},
+				{name: 'Cerveja', price: 2.70},
+				{name: 'Vinho', price: 2.70}
+
+			]
+		});
 	});
 
 	app.use('/products', require('./products'));
 
 	return router;
-}
+};
